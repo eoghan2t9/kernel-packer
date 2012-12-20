@@ -1,11 +1,16 @@
+#!/bin/bash
+export PATH=$PATH:bin
+chmod -R 777 bin/*
 RAMDISK_GIT="git://github.com/simonsimons34/android_primoc-ramdisk.git"
 mkdir bootimg-create
 cd bootimg-create
 git clone $RAMDISK_GIT boot-img-ramdisk
-mkdir -p lib/modules/
+cd boot-img-ramdisk && git checkout jellybean
+cd ..
+mkdir -p boot-img-ramdisk/lib/modules/
 find -name '../*.ko' -exec cp -av {} boot-img-ramdisk/lib/modules/ \;
-./bin/mkbootfs boot-img-ramdisk | gzip > boot.img-ramdisk.gz
+mkbootfs boot-img-ramdisk | gzip > boot.img-ramdisk.gz
 NOW=$(date +"%m-%d-%y_%H:%M")
-./bin/mkbootimg --kernel Kernel/arch/arm/boot/zImage --ramdisk boot.img-ramdisk-cm10.gz -o SuperSlick-"$NOW".img --base 13f00000
+mkbootimg --kernel Kernel/arch/arm/boot/zImage --ramdisk boot.img-ramdisk-cm10.gz -o SuperSlick-"$NOW".img --base 13f00000
 cp *.img ../SuperSick-"$NOW".img
 rm -rf boot*
